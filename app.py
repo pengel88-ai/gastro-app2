@@ -1,5 +1,24 @@
 import streamlit as st
+def check_password():
+    """Gibt True zurück, wenn das Passwort korrekt ist."""
+    if "password_correct" not in st.session_state:
+        st.session_state["password_correct"] = False
 
+    if st.session_state["password_correct"]:
+        return True
+
+    # Login-Maske anzeigen
+    password = st.text_input("Bitte Passwort eingeben", type="password")
+    if st.button("Anmelden"):
+        if password == "DeinGeheimesPasswort123": # Hier dein Passwort festlegen
+            st.session_state["password_correct"] = True
+            st.rerun()
+        else:
+            st.error("Falsches Passwort")
+    return False
+
+if not check_password():
+    st.stop()  # Zeige den Rest der App nicht an
 st.set_page_config(page_title="GastroPro Kalkulator", layout="centered")
 
 st.title("👨‍🍳 GastroPro: Kalkulation & Planung")
