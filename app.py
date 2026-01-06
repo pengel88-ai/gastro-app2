@@ -10,7 +10,7 @@ def check_password():
     # Login-Maske anzeigen
     password = st.text_input("Bitte Passwort eingeben", type="password")
     if st.button("Anmelden"):
-        if password == "DeinGeheimesPasswort123": # Hier dein Passwort festlegen Aw98zHFxknJMSMN
+        if password == "DeinGeheimesPasswort123": # Aw98zHFxknJMSMN
             st.session_state["password_correct"] = True
             st.rerun()
         else:
