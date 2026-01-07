@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime
 
 # --- 1. KONFIGURATION ---
-st.set_page_config(page_title="GastroPro v1.9.2 - Full Demo", page_icon="👨‍🍳", layout="wide")
+st.set_page_config(page_title="GastroPro v1.9.3 - Final Demo", page_icon="👨‍🍳", layout="wide")
 
 # --- 2. PASSWORT-SCHUTZ ---
 def check_password():
@@ -23,29 +23,22 @@ def check_password():
 
 # --- 3. ERWEITERTE DEMO-DATEN ---
 def load_demo_data():
-    # Erweiterte Speisekarte
     st.session_state['rezepte'] = [
-        # Speisen
         {"Name": "Wiener Schnitzel (Kalb)", "Kat": "Speise", "VK": 24.50, "Marge %": 68.5},
         {"Name": "Lachsforelle Müllerin Art", "Kat": "Speise", "VK": 21.90, "Marge %": 72.1},
         {"Name": "Trüffel Pasta", "Kat": "Speise", "VK": 18.50, "Marge %": 75.0},
         {"Name": "Rinderfilet 200g", "Kat": "Speise", "VK": 32.00, "Marge %": 62.0},
         {"Name": "Caesar Salad", "Kat": "Speise", "VK": 14.50, "Marge %": 78.0},
-        {"Name": "Hausgemachte Lasagne", "Kat": "Speise", "VK": 16.90, "Marge %": 74.0},
-        # Getränke
         {"Name": "Hausgemachte Limonade", "Kat": "Getränk", "VK": 5.50, "Marge %": 88.0},
         {"Name": "Gin Tonic (Hausmarke)", "Kat": "Getränk", "VK": 9.50, "Marge %": 82.5},
         {"Name": "Helles Bier 0,5l", "Kat": "Getränk", "VK": 4.80, "Marge %": 85.0},
         {"Name": "Aperol Spritz", "Kat": "Getränk", "VK": 7.50, "Marge %": 84.0},
-        {"Name": "Espresso", "Kat": "Getränk", "VK": 2.80, "Marge %": 92.0},
-        {"Name": "Grauburgunder 0,2l", "Kat": "Getränk", "VK": 6.90, "Marge %": 80.0}
+        {"Name": "Espresso", "Kat": "Getränk", "VK": 2.80, "Marge %": 92.0}
     ]
-    # Beispiel Personal
     st.session_state['schichten'] = [
         {"Tag": "Montag", "Name": "Max (Küchenchef)", "Bereich": "Küche", "Kosten": 180.0, "Umsatz_Soll": 1500.0},
         {"Tag": "Montag", "Name": "Anna", "Bereich": "Service", "Kosten": 120.0, "Umsatz_Soll": 1500.0},
-        {"Tag": "Dienstag", "Name": "Lukas", "Bereich": "Bar", "Kosten": 100.0, "Umsatz_Soll": 1000.0},
-        {"Tag": "Dienstag", "Name": "Maria", "Bereich": "Service", "Kosten": 110.0, "Umsatz_Soll": 1000.0}
+        {"Tag": "Dienstag", "Name": "Lukas", "Bereich": "Bar", "Kosten": 100.0, "Umsatz_Soll": 1000.0}
     ]
     st.success("Erweiterte Demo-Daten geladen!")
 
@@ -59,8 +52,7 @@ if check_password():
     tage = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
     bereiche = ["Küche", "Service", "Spülküche", "Bar", "Overhead"]
 
-    # --- SIDEBAR ---
-    st.sidebar.title("👨‍🍳 GastroPro v1.9.2")
+    st.sidebar.title("👨‍🍳 GastroPro v1.9.3")
     if st.sidebar.button("✨ Demo-Daten laden"):
         load_demo_data()
         st.rerun()
@@ -80,7 +72,6 @@ if check_password():
         
         if st.session_state['schichten']:
             df_p = pd.DataFrame(st.session_state['schichten'])
-            st.subheader("Personalaufwand nach Abteilungen")
             st.bar_chart(df_p.groupby("Bereich")["Kosten"].sum().reindex(bereiche).fillna(0))
 
     # --- KALKULATION ---
@@ -107,41 +98,4 @@ if check_password():
     # --- PERSONAL & ABSATZ-CHECK ---
     elif page == "📅 Personal & Absatz":
         st.header("📅 Wochenplanung & Absatz-Check")
-        with st.expander("➕ Neue Schicht hinzufügen"):
-            c1, c2 = st.columns(2)
-            with c1:
-                t = st.selectbox("Wochentag", tage); n = st.text_input("Name"); b = st.selectbox("Bereich", bereiche)
-            with c2:
-                s = st.number_input("Stunden", value=8.0); l = st.number_input("Lohn", value=15.0); u = st.number_input("Tagesumsatz Ziel (€)", value=1000.0)
-            if st.button("Schicht eintragen"):
-                st.session_state['schichten'].append({"Tag": t, "Name": n, "Bereich": b, "Kosten": s*l*1.2, "Umsatz_Soll": u})
-                st.rerun()
-
-        for tag in tage:
-            tag_schichten = [s for s in st.session_state['schichten'] if s['Tag'] == tag]
-            if tag_schichten:
-                with st.expander(f"📌 {tag}", expanded=True):
-                    t_umsatz = tag_schichten[0]['Umsatz_Soll']
-                    t_kosten = sum(s['Kosten'] for s in tag_schichten)
-                    
-                    st.write(f"**Personal:** {t_kosten:.2f} € | **Ziel-Umsatz:** {t_umsatz:.2f} €")
-                    
-                    # --- Absatz-Berechnung ---
-                    if st.session_state['rezepte']:
-                        df_r = pd.DataFrame(st.session_state['rezepte'])
-                        
-                        # Durchschnittspreise
-                        avg_s = df_r[df_r['Kat'] == "Speise"]['VK'].mean() if not df_r[df_r['Kat'] == "Speise"].empty else 0
-                        avg_g = df_r[df_r['Kat'] == "Getränk"]['VK'].mean() if not df_r[df_r['Kat'] == "Getränk"].empty else 0
-                        
-                        st.markdown("---")
-                        st.write("⚖️ **Was muss verkauft werden?** (Regler verschieben für Mix)")
-                        split = st.slider(f"Umsatz-Mix % (Speisen zu Getränke)", 0, 100, 60, key=f"split_{tag}")
-                        
-                        c_a, c_b = st.columns(2)
-                        if avg_s > 0:
-                            s_ziel = (t_umsatz * (split/100)) / avg_s
-                            c_a.metric("Speisen (Anzahl)", f"{int(s_ziel)} Stk.", f"Ø {avg_s:.2f}€")
-                        if avg_g > 0:
-                            g_ziel = (t_umsatz * ((100-split)/100)) / avg_g
-                            c_b.metric("Getränke (Anzahl)", f"{int(g_ziel)} Stk.", f"Ø {avg_g:.2f}€
+        with st.expander("➕ Neue Schicht hinzufügen
