@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime
 
 # --- 1. KONFIGURATION ---
-st.set_page_config(page_title="GastroPro v1.9.4", page_icon="👨‍🍳", layout="wide")
+st.set_page_config(page_title="GastroPro v1.9.5", page_icon="👨‍🍳", layout="wide")
 
 # --- 2. PASSWORT-SCHUTZ ---
 def check_password():
@@ -62,19 +62,16 @@ if check_password():
     
     page = st.sidebar.radio("Menü:", ["📊 Dashboard", "🍲 Kalkulation", "📅 Personal & Absatz", "📜 Speisekarte"])
 
-    # --- 📊 DASHBOARD ---
     if page == "📊 Dashboard":
         st.header("📊 Kosten-Analyse")
         total_p = sum(s['Kosten'] for s in st.session_state['schichten'])
         c1, c2 = st.columns(2)
         c1.metric("Personal-Kosten (Woche)", f"{total_p:.2f} €")
         c2.metric("Rezepte gesamt", len(st.session_state['rezepte']))
-        
         if st.session_state['schichten']:
             df_p = pd.DataFrame(st.session_state['schichten'])
             st.bar_chart(df_p.groupby("Bereich")["Kosten"].sum().reindex(bereiche).fillna(0))
 
-    # --- 🍲 KALKULATION ---
     elif page == "🍲 Kalkulation":
         st.header("🍲 Neue Kalkulation")
         col1, col2 = st.columns(2)
@@ -86,20 +83,16 @@ if check_password():
             gemeinkosten = st.slider("Gemeinkosten Aufschlag %", 0, 100, 25)
             vk = st.number_input("Verkaufspreis Brutto (€)", min_value=0.0, value=15.0)
             mwst = st.radio("MwSt (%)", [19, 7], horizontal=True)
-
+        
         netto_vk = vk / (1 + mwst/100)
         selbstkosten = ek * (1 + gemeinkosten/100)
         marge = ((netto_vk - selbstkosten) / netto_vk * 100) if netto_vk > 0 else 0
-
         if st.button("💾 Gericht speichern"):
             st.session_state['rezepte'].append({"Name": name, "Kat": kat, "VK": vk, "Marge %": round(marge, 1)})
-            st.success(f"{name} gespeichert!")
+            st.success("Gespeichert!")
 
-    # --- 📅 PERSONAL & ABSATZ-CHECK ---
     elif page == "📅 Personal & Absatz":
         st.header("📅 Wochenplanung & Absatz-Check")
-        
-        # FIX: Zeile 101 korrigiert
         with st.expander("➕ Neue Schicht hinzufügen"):
             c1, c2 = st.columns(2)
             with c1:
@@ -115,21 +108,39 @@ if check_password():
             if tag_schichten:
                 with st.expander(f"📌 {tag}", expanded=True):
                     t_umsatz = tag_schichten[0]['Umsatz_Soll']
-                    t_kosten = sum(s['Kosten'] for s in tag_schichten)
-                    st.write(f"**Personal:** {t_kosten:.2f} € | **Ziel-Umsatz:** {t_umsatz:.2f} €")
+                    st.write(f"**Personal:** {sum(s['Kosten'] for s in tag_schichten):.2f} € | **Ziel:** {t_umsatz:.2f} €")
                     
                     if st.session_state['rezepte']:
                         df_r = pd.DataFrame(st.session_state['rezepte'])
                         avg_s = df_r[df_r['Kat'] == "Speise"]['VK'].mean() if not df_r[df_r['Kat'] == "Speise"].empty else 0
                         avg_g = df_r[df_r['Kat'] == "Getränk"]['VK'].mean() if not df_r[df_r['Kat'] == "Getränk"].empty else 0
-                        
-                        st.markdown("---")
-                        split = st.slider(f"Mix-Verhältnis % (Speisen vs. Getränke)", 0, 100, 60, key=f"split_{tag}")
+                        split = st.slider(f"Mix % (Speisen vs. Getränke)", 0, 100, 60, key=f"split_{tag}")
                         
                         c_a, c_b = st.columns(2)
                         if avg_s > 0:
                             s_ziel = (t_umsatz * (split/100)) / avg_s
-                            c_a.metric("Speisen (Anzahl)", f"{int(s_ziel)} Stk.", f"Ø {avg_s:.2f}€")
+                            c_a.metric("Speisen", f"{int(s_ziel)} Stk.", f"Ø {avg_s:.2f} €")
                         if avg_g > 0:
                             g_ziel = (t_umsatz * ((100-split)/100)) / avg_g
-                            c_b.metric("Getränke (Anzahl)", f"{int(g_ziel)} Stk.", f"Ø {avg_g:.2f}
+                            # --- ZEILE 135 FIX ---
+                            c_b.metric("Getränke", f"{int(g_ziel)} Stk.", f"Ø {avg_g:.2f} €")
+                    
+                    for i, sch in enumerate(st.session_state['schichten']):
+                        if sch['Tag'] == tag:
+                            col_n, col_d = st.columns([5,1])
+                            col_n.write(f"• {sch['Name']} ({sch['Bereich']})")
+                            if col_d.button("🗑️", key=f"del_p_{tag}_{i}"):
+                                st.session_state['schichten'].pop(i)
+                                st.rerun()
+
+    elif page == "📜 Speisekarte":
+        st.header("📜 Karte")
+        if st.session_state['rezepte']:
+            for i, r in enumerate(st.session_state['rezepte']):
+                c1, c2, c3, c4 = st.columns([3, 1, 1, 1])
+                c1.write(f"**{r['Name']}**")
+                c2.write(f"{r['VK']:.2f} €")
+                c3.write(f"{r['Marge %']}%")
+                if c4.button("🗑️", key=f"del_rez_{i}"):
+                    st.session_state['rezepte'].pop(i)
+                    st.rerun()
