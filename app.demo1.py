@@ -27,28 +27,67 @@ def check_login():
 # --- 3. DEMO DATEN (10 MA, Volle Karte) ---
 def init_data():
     # A) MITARBEITER (10 Personen, verteilt auf die Woche für die Plantafel)
-    if "staff" not in st.session_state:
+   if "staff" not in st.session_state:
         st.session_state["staff"] = [
-            {"Name": "Chef Thomas", "Pos": "Küche", "Tag": "Mo", "Std": 10, "Lohn": 25.0},
-            {"Name": "Chef Thomas", "Pos": "Küche", "Tag": "Di", "Std": 10, "Lohn": 25.0},
-            {"Name": "Chef Thomas", "Pos": "Küche", "Tag": "Fr", "Std": 11, "Lohn": 25.0},
-            {"Name": "Sous Stefan", "Pos": "Küche", "Tag": "Mo", "Std": 9, "Lohn": 19.0},
-            {"Name": "Sous Stefan", "Pos": "Küche", "Tag": "Di", "Std": 9, "Lohn": 19.0},
-            {"Name": "Sous Stefan", "Pos": "Küche", "Tag": "Sa", "Std": 10, "Lohn": 19.0},
+            # KÜCHE (Thomas, Stefan, Ali) - Versetzte freien Tage
+            {"Name": "Chef Thomas", "Pos": "Küche", "Tag": "Mo", "Std": 8, "Lohn": 25.0},
+            {"Name": "Chef Thomas", "Pos": "Küche", "Tag": "Di", "Std": 8, "Lohn": 25.0},
+            {"Name": "Chef Thomas", "Pos": "Küche", "Tag": "Mi", "Std": 8, "Lohn": 25.0},
+            {"Name": "Chef Thomas", "Pos": "Küche", "Tag": "Do", "Std": 8, "Lohn": 25.0},
+            {"Name": "Chef Thomas", "Pos": "Küche", "Tag": "Fr", "Std": 8, "Lohn": 25.0},
+            
+            {"Name": "Sous Stefan", "Pos": "Küche", "Tag": "Mi", "Std": 8, "Lohn": 19.0},
+            {"Name": "Sous Stefan", "Pos": "Küche", "Tag": "Do", "Std": 8, "Lohn": 19.0},
+            {"Name": "Sous Stefan", "Pos": "Küche", "Tag": "Fr", "Std": 8, "Lohn": 19.0},
+            {"Name": "Sous Stefan", "Pos": "Küche", "Tag": "Sa", "Std": 8, "Lohn": 19.0},
+            {"Name": "Sous Stefan", "Pos": "Küche", "Tag": "So", "Std": 8, "Lohn": 19.0},
+            
+            {"Name": "Jungkoch Ali", "Pos": "Küche", "Tag": "Mo", "Std": 8, "Lohn": 16.0},
+            {"Name": "Jungkoch Ali", "Pos": "Küche", "Tag": "Di", "Std": 8, "Lohn": 16.0},
             {"Name": "Jungkoch Ali", "Pos": "Küche", "Tag": "Fr", "Std": 8, "Lohn": 16.0},
-            {"Name": "Jungkoch Ali", "Pos": "Küche", "Tag": "Sa", "Std": 9, "Lohn": 16.0},
-            {"Name": "Spüle Maria", "Pos": "Spüle", "Tag": "Fr", "Std": 7, "Lohn": 14.0},
-            {"Name": "Spüle Maria", "Pos": "Spüle", "Tag": "Sa", "Std": 8, "Lohn": 14.0},
-            {"Name": "Leitung Jan", "Pos": "Service", "Tag": "Fr", "Std": 9, "Lohn": 20.0},
-            {"Name": "Leitung Jan", "Pos": "Service", "Tag": "Sa", "Std": 10, "Lohn": 20.0},
-            {"Name": "Service Lisa", "Pos": "Service", "Tag": "Mo", "Std": 7, "Lohn": 15.0},
-            {"Name": "Service Lisa", "Pos": "Service", "Tag": "Fr", "Std": 8, "Lohn": 15.0},
+            {"Name": "Jungkoch Ali", "Pos": "Küche", "Tag": "Sa", "Std": 8, "Lohn": 16.0},
+            {"Name": "Jungkoch Ali", "Pos": "Küche", "Tag": "So", "Std": 8, "Lohn": 16.0},
+
+            # SERVICE (Jan, Lisa, Tom, Kevin)
+            {"Name": "Leitung Jan", "Pos": "Service", "Tag": "Mi", "Std": 8, "Lohn": 20.0},
+            {"Name": "Leitung Jan", "Pos": "Service", "Tag": "Do", "Std": 8, "Lohn": 20.0},
+            {"Name": "Leitung Jan", "Pos": "Service", "Tag": "Fr", "Std": 8, "Lohn": 20.0},
+            {"Name": "Leitung Jan", "Pos": "Service", "Tag": "Sa", "Std": 8, "Lohn": 20.0},
+            {"Name": "Leitung Jan", "Pos": "Service", "Tag": "So", "Std": 8, "Lohn": 20.0},
+
+            {"Name": "Service Lisa", "Pos": "Service", "Tag": "Mo", "Std": 8, "Lohn": 15.0},
+            {"Name": "Service Lisa", "Pos": "Service", "Tag": "Di", "Std": 8, "Lohn": 15.0},
+            {"Name": "Service Lisa", "Pos": "Service", "Tag": "Mi", "Std": 8, "Lohn": 15.0},
+            {"Name": "Service Lisa", "Pos": "Service", "Tag": "Sa", "Std": 8, "Lohn": 15.0},
+            {"Name": "Service Lisa", "Pos": "Service", "Tag": "So", "Std": 8, "Lohn": 15.0},
+
+            {"Name": "Service Tom", "Pos": "Service", "Tag": "Do", "Std": 8, "Lohn": 15.0},
+            {"Name": "Service Tom", "Pos": "Service", "Tag": "Fr", "Std": 8, "Lohn": 15.0},
             {"Name": "Service Tom", "Pos": "Service", "Tag": "Sa", "Std": 8, "Lohn": 15.0},
-            {"Name": "Runner Kevin", "Pos": "Service", "Tag": "Sa", "Std": 6, "Lohn": 13.5},
-            {"Name": "Barchef Mike", "Pos": "Bar", "Tag": "Fr", "Std": 9, "Lohn": 18.0},
-            {"Name": "Barchef Mike", "Pos": "Bar", "Tag": "Sa", "Std": 10, "Lohn": 18.0},
-            {"Name": "Barhilfe Sarah", "Pos": "Bar", "Tag": "Sa", "Std": 7, "Lohn": 14.0},
-            {"Name": "Aushilfe Tim", "Pos": "Spüle", "Tag": "So", "Std": 5, "Lohn": 13.0}
+            {"Name": "Service Tom", "Pos": "Service", "Tag": "So", "Std": 8, "Lohn": 15.0},
+            {"Name": "Service Tom", "Pos": "Service", "Tag": "Mo", "Std": 8, "Lohn": 15.0},
+
+            {"Name": "Runner Kevin", "Pos": "Service", "Tag": "Fr", "Std": 8, "Lohn": 13.5},
+            {"Name": "Runner Kevin", "Pos": "Service", "Tag": "Sa", "Std": 8, "Lohn": 13.5},
+            {"Name": "Runner Kevin", "Pos": "Service", "Tag": "So", "Std": 8, "Lohn": 13.5},
+
+            # BAR (Mike, Sarah)
+            {"Name": "Barchef Mike", "Pos": "Bar", "Tag": "Di", "Std": 8, "Lohn": 18.0},
+            {"Name": "Barchef Mike", "Pos": "Bar", "Tag": "Do", "Std": 8, "Lohn": 18.0},
+            {"Name": "Barchef Mike", "Pos": "Bar", "Tag": "Fr", "Std": 8, "Lohn": 18.0},
+            {"Name": "Barchef Mike", "Pos": "Bar", "Tag": "Sa", "Std": 8, "Lohn": 18.0},
+            {"Name": "Barchef Mike", "Pos": "Bar", "Tag": "So", "Std": 8, "Lohn": 18.0},
+
+            {"Name": "Barhilfe Sarah", "Pos": "Bar", "Tag": "Fr", "Std": 8, "Lohn": 14.0},
+            {"Name": "Barhilfe Sarah", "Pos": "Bar", "Tag": "Sa", "Std": 8, "Lohn": 14.0},
+            {"Name": "Barhilfe Sarah", "Pos": "Bar", "Tag": "So", "Std": 8, "Lohn": 14.0},
+
+            # SPÜLKÜCHE (Maria)
+            {"Name": "Spüle Maria", "Pos": "Spüle", "Tag": "Mi", "Std": 8, "Lohn": 14.0},
+            {"Name": "Spüle Maria", "Pos": "Spüle", "Tag": "Do", "Std": 8, "Lohn": 14.0},
+            {"Name": "Spüle Maria", "Pos": "Spüle", "Tag": "Fr", "Std": 8, "Lohn": 14.0},
+            {"Name": "Spüle Maria", "Pos": "Spüle", "Tag": "Sa", "Std": 8, "Lohn": 14.0},
+            {"Name": "Spüle Maria", "Pos": "Spüle", "Tag": "So", "Std": 8, "Lohn": 14.0},
         ]
 
     # B) SPEISEKARTE (Umfangreich)
